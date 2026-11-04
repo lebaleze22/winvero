@@ -1,0 +1,93 @@
+/* Thème « premium » (2026-11-03, 2e version) : fonds profonds, surfaces sobres,
+   accents réservés aux actions et aux détails (or champagne, violet, cyan discret).
+   Chargé après app.css ; retirer l'import dans main.tsx pour revenir au thème d'origine. */
+:root{
+  --ink:#f6f3ff;--muted:#b9b2d2;--line:rgba(255,255,255,.11);--paper:rgba(24,17,48,.78);
+  --violet:#8b6bff;--cyan:#5ad8ee;--gold:#d9b36a;--orange:#d6568f;--lime:#b8e86a;--mint:#5ad8ee;
+  --neon-violet:#8b6bff;--neon-pink:#d6568f;--neon-cyan:#5ad8ee;--neon-gold:#d9b36a;
+  --prem-surface:linear-gradient(160deg,rgba(32,23,66,.82),rgba(15,10,34,.9));
+  --prem-grad:linear-gradient(120deg,#6a47df 0%,#9a4ccb 60%,#c2508f 100%);
+}
+body{color:#f6f3ff;background:
+  radial-gradient(60% 40% at 8% 0%,rgba(96,64,200,.30),transparent 70%),
+  radial-gradient(45% 35% at 100% 8%,rgba(194,80,143,.16),transparent 70%),
+  linear-gradient(180deg,#0f0a22 0%,#0a0718 60%,#09061a 100%) fixed}
+body:before{opacity:.22}
+::selection{background:rgba(139,107,255,.55)}
+
+/* texte */
+.auth-copy p,.hero-copy>p,.page-heading p,.game-info p,.stat-card p,.balance-card p,.side-wallet small,.header-title small,.page-balance small,.process>div>p,.process li span,.public-footer p,.public-footer>span,.form-hint,.activity-list small,.empty-list p{color:#b9b2d2!important}
+.step-label,.page-kicker,.game-info>span,.eyebrow{color:#d9b36a!important;-webkit-text-fill-color:currentColor;background:none}
+.logic-title h1,.mines-heading h1,.page-heading h1,.auth-copy h1{text-shadow:none}
+
+/* barre latérale et en-tête */
+.sidebar{background:linear-gradient(180deg,#150f31 0%,#0e0a22 100%)!important;border-right:1px solid rgba(255,255,255,.08)}
+.app-header{background:rgba(14,10,34,.82)!important;backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)}
+.sidebar nav a{color:#cbc4e2}
+.sidebar nav a:hover{background:rgba(255,255,255,.06)}
+.sidebar nav a.active{background:linear-gradient(90deg,rgba(139,107,255,.28),rgba(139,107,255,.06))!important;color:#fff;box-shadow:inset 2px 0 0 #d9b36a}
+.sidebar nav a svg{color:#a99cdb}
+.sidebar nav a.active svg{color:#d9b36a}
+.balance-pill{background:rgba(217,179,106,.1);border-color:rgba(217,179,106,.45)!important;color:#f3dfb0;box-shadow:none}
+.avatar{background:linear-gradient(135deg,#d9b36a,#a9803a)!important;color:#1a1204!important;box-shadow:none}
+
+/* boutons */
+.button:not(.cashout):not(.secondary){background:var(--prem-grad)!important;color:#fff!important;border-color:rgba(255,255,255,.22)!important;box-shadow:0 8px 26px rgba(106,71,223,.38)}
+.button:not(.cashout):not(.secondary):hover{filter:brightness(1.1);transform:translateY(-1px)}
+.button.cashout{background:linear-gradient(120deg,#1e9f74,#49c995)!important;color:#03180f!important;box-shadow:0 8px 26px rgba(30,159,116,.35)}
+.filter-row button,.choice-row button,.quick-bets button{background:rgba(255,255,255,.05)!important;border-color:rgba(255,255,255,.14)!important;color:#e8e3f7!important}
+.filter-row button:hover,.choice-row button:hover,.quick-bets button:hover{background:rgba(139,107,255,.2)!important}
+.filter-row button.active,.choice-row button.active,.choice-row button[aria-checked=true],.quick-bets button.active{background:rgba(139,107,255,.3)!important;border-color:#d9b36a!important;color:#fff!important;box-shadow:none}
+
+/* cartes */
+.balance-card{background:linear-gradient(135deg,#2a1b62,#1a1040)!important;border-color:rgba(217,179,106,.4)!important;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.balance-card>span,.balance-card p{color:#d9b36a!important}
+.balance-card a{color:#f3dfb0;background:rgba(217,179,106,.14);padding:7px 12px;border-radius:99px;width:max-content}
+.stat-card,.panel,.activity-list,.bet-panel{background:var(--prem-surface)!important;border-color:rgba(255,255,255,.1)!important;box-shadow:0 14px 40px rgba(0,0,0,.28)}
+.overview-grid .stat-card:last-child{background:var(--prem-surface)!important}
+.stat-card>span{background:rgba(217,179,106,.14)!important;color:#d9b36a!important;box-shadow:none}
+.notice{background:linear-gradient(120deg,rgba(217,179,106,.14),rgba(139,107,255,.1))!important;border-color:rgba(217,179,106,.45)!important}
+.fair-box,.bet-balance{background:rgba(90,216,238,.07)!important;border:1px solid rgba(90,216,238,.25);color:#dff7fb!important}
+
+/* cartes de jeu */
+.game-card{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 16%,#1b1238),#0d0920 75%)!important;border-color:rgba(255,255,255,.1)!important;box-shadow:0 16px 44px rgba(0,0,0,.5)}
+.game-art{background:radial-gradient(circle at 50% 55%,color-mix(in srgb,var(--accent) 38%,transparent),transparent 60%),linear-gradient(150deg,color-mix(in srgb,var(--accent) 14%,#1d1440),#0e0a22)!important}
+.game-info h3{color:#fff}
+.game-multi{background:rgba(10,7,24,.72)!important;color:#e9cf93!important;border:1px solid rgba(217,179,106,.55)!important;box-shadow:none;backdrop-filter:blur(6px)}
+.game-card:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent) 60%,#fff 10%)!important;box-shadow:0 26px 60px rgba(0,0,0,.6),0 0 30px color-mix(in srgb,var(--accent) 28%,transparent)}
+
+/* salles de jeu */
+.logic-stage,.card-stage{background:
+  radial-gradient(70% 55% at 50% 0%,rgba(110,76,220,.30),transparent 70%),
+  linear-gradient(160deg,#1c1340,#0f0a25)!important;border-color:rgba(255,255,255,.1)!important}
+.round-log li.win{background:rgba(47,191,138,.16);border-color:#2fbf8a}
+.round-log li.loss{background:rgba(224,82,106,.16);border-color:#e0526a}
+.round-log li.push{background:rgba(217,179,106,.16);border-color:#d9b36a}
+
+/* accueil et connexion */
+.hero{background:
+  radial-gradient(circle at 72% 35%,rgba(110,76,220,.38),transparent 32%),
+  radial-gradient(circle at 90% 78%,rgba(194,80,143,.24),transparent 30%),
+  linear-gradient(135deg,#171034 0%,#0f0a26 55%,#1c0f35 100%)!important;border-color:rgba(255,255,255,.14)!important}
+.performance-card{background:linear-gradient(145deg,rgba(40,28,92,.92),rgba(14,9,34,.94))!important}
+.public-nav{background:rgba(14,10,34,.86)!important}
+.proof-strip{background:linear-gradient(90deg,transparent,rgba(139,107,255,.1),transparent)!important}
+.auth-panel{background:linear-gradient(150deg,#2a1b62 0%,#150e34 60%,#2a1236 100%)!important}
+.auth-form-wrap{background:linear-gradient(180deg,#120c2a,#0b0719)}
+.auth-form input:not([type=checkbox]),.bet-panel input{background:rgba(10,7,26,.85)!important;border-color:rgba(255,255,255,.18)!important;color:#fff!important}
+.auth-form input:focus,.bet-panel input:focus{border-color:#d9b36a!important;box-shadow:0 0 0 3px rgba(217,179,106,.22)}
+.positive{color:#46d29b!important}
+.negative{color:#ff7a90!important}
+
+/* fond de l'application */
+.app-shell{background:
+  radial-gradient(55% 40% at 90% 0%,rgba(194,80,143,.14),transparent 70%),
+  radial-gradient(60% 45% at 25% 100%,rgba(96,64,200,.22),transparent 70%),
+  linear-gradient(180deg,#0f0a22 0%,#0a0718 100%)!important}
+.landing{background:linear-gradient(180deg,#0f0a22,#09061a)!important}
+.side-promo{background:linear-gradient(135deg,rgba(217,179,106,.16),rgba(139,107,255,.14))!important;border:1px solid rgba(217,179,106,.45)!important;box-shadow:none}
+.side-promo span{color:#e9cf93}
+.hero h1 em{background:linear-gradient(90deg,#c9b4ff 0%,#e9a7cf 50%,#9fe6f2 100%)!important;background-clip:text!important;-webkit-background-clip:text!important;filter:none!important;text-shadow:none!important}
+.hero-card.card-a{background:linear-gradient(135deg,#1c1850,#33237a)!important}
+.hero-card.card-b{background:linear-gradient(135deg,#5a3cc8,#a24a95)!important}
+.game-card .game-info>span{color:#d9b36a!important}

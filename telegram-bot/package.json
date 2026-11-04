@@ -1,0 +1,12 @@
+{
+  "name": "winvero-telegram-bot",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env bot.mjs",
+    "check": "node --check bot.mjs && node --check bot-runtime.mjs && node --check send-test.mjs && node --check telegram-client.mjs && node --check diagnose.mjs",
+    "diagnose": "node --env-file-if-exists=.env diagnose.mjs",
+    "test:send": "node --env-file-if-exists=.env send-test.mjs"
+  }
+}

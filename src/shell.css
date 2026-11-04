@@ -1,0 +1,43 @@
+/* Coque de navigation (2026-11-03) : barre supérieure sticky + barre d'onglets mobile.
+   Parcours : Accueil → Casino → Parcours → Historique ; le compte est dans le menu avatar. */
+.shell{min-height:100vh;background:
+  radial-gradient(55% 40% at 90% 0%,rgba(194,80,143,.14),transparent 70%),
+  radial-gradient(60% 45% at 25% 100%,rgba(96,64,200,.22),transparent 70%),
+  linear-gradient(180deg,#0f0a22 0%,#0a0718 100%)}
+
+.topbar{position:sticky;top:0;z-index:30;background:rgba(12,8,28,.86);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.08)}
+.topbar-inner{max-width:1360px;margin:0 auto;height:68px;padding:0 28px;display:flex;align-items:center;gap:32px}
+.topnav{display:flex;align-items:center;gap:4px;height:100%}
+.topnav a{position:relative;display:flex;align-items:center;gap:8px;height:100%;padding:0 16px;font-size:14px;font-weight:600;color:#b9b2d2;transition:color .2s}
+.topnav a:hover{color:#fff}
+.topnav a.active{color:#fff}
+.topnav a.active:after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:#d9b36a;box-shadow:0 0 14px rgba(217,179,106,.6)}
+.topnav a svg{color:#8f86b4}
+.topnav a.active svg{color:#d9b36a}
+.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:12px}
+.unlock-pill{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:99px;background:linear-gradient(120deg,#d9b36a,#b98a3e);color:#1d1204;font-size:13px;font-weight:800;box-shadow:0 6px 20px rgba(217,179,106,.3)}
+.topbar .balance-pill{height:40px;padding:0 16px;border-radius:99px;font-family:var(--font-data);font-size:13px}
+.topbar .avatar{width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;display:grid;place-items:center;font:800 13px var(--font-data)}
+.user-menu{position:relative}
+.user-popover{position:absolute;right:0;top:calc(100% + 10px);width:270px;padding:8px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:#16102f;box-shadow:0 24px 60px rgba(0,0,0,.6);animation:riseIn .18s ease both}
+.user-popover-head{display:grid;gap:2px;padding:10px 12px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:6px}
+.user-popover-head small{color:#b9b2d2;overflow:hidden;text-overflow:ellipsis}
+.user-popover a,.user-popover button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:0;border-radius:10px;background:transparent;color:#e8e3f7;font-size:14px;font-weight:600;text-align:left;cursor:pointer}
+.user-popover a small{margin-left:auto;color:#d9b36a}
+.user-popover a:hover,.user-popover button:hover,.user-popover a:focus-visible,.user-popover button:focus-visible{background:rgba(139,107,255,.18);outline:none}
+
+.shell .page{max-width:1360px;padding:32px 28px 64px}
+.tabbar{display:none}
+
+@media(max-width:900px){
+ .topbar-inner{gap:14px;padding:0 16px;height:60px}
+ .topnav{display:none}
+ .unlock-pill{display:none}
+ .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;padding:6px 6px calc(6px + env(safe-area-inset-bottom));background:rgba(12,8,28,.94);backdrop-filter:blur(18px);border-top:1px solid rgba(255,255,255,.1)}
+ .tabbar a{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border-radius:12px;font-size:11px;font-weight:700;color:#9d95bf}
+ .tabbar a.active{color:#fff;background:rgba(139,107,255,.2)}
+ .tabbar a.active svg{color:#d9b36a}
+ .shell .page{padding:20px 16px 96px}
+}
+
+@media(max-width:520px){.topbar .brand-word{display:none}}

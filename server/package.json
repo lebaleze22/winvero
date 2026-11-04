@@ -1,0 +1,16 @@
+{
+  "name": "winvero-game-server",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env secure-server.mjs",
+    "migrate": "node --env-file-if-exists=.env migrate.mjs",
+    "check": "node --check secure-server.mjs && node --check db.mjs && node --check migration-runner.mjs && node --check provably-fair.mjs && node --check rules.mjs && node --check telegram-notifications.mjs && node --check telegram-status.mjs",
+    "telegram:status": "node --env-file-if-exists=.env telegram-status.mjs",
+    "test": "node --test rules.test.mjs integration.test.mjs client-api-errors.test.mjs cleanup-ui-test-accounts.test.mjs telegram.test.mjs"
+  },
+  "dependencies": {
+    "argon2": "^0.45.1"
+  }
+}

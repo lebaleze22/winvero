@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+
+# Local documentation and reports
+/docs/
+*.md
+/*.html
+!/index.html
+/.codex/
+/.agents/
+
+# Private runtime data and generated files
+**/data/
+**/backups/
+*.sqlite*
+*.db
+*.tsbuildinfo
+*.pem
+*.key
