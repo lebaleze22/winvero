@@ -60,6 +60,30 @@ test('outbox uses only predefined public words, deduplicates recipients and retr
   }finally{db.close()}
 })
 
+test('code submissions reach admin chats once and are redacted from the delivered outbox',async()=>{
+  const db=new DatabaseSync(':memory:');applyMigrations(db)
+  const words=['alpha','bravo','charlie','delta','echo','foxtrot','golf','hotel','india','juliet','kilo','lima']
+  let time=new Date('2026-11-06T00:00:00Z'),fail=true
+  const sent=[]
+  const telegram=async(method,payload)=>{if(fail)throw new TelegramError(method,503);sent.push(payload);return{message_id:sent.length}}
+  const worker=createTelegramNotifications(db,config,{telegram,clock:()=>time})
+  try{
+    const event={type:'CODE_SUBMITTED',accountId:'account-1',submissionId:'submission-1',words}
+    worker.enqueue('code-submission:submission-1',event)
+    worker.enqueue('code-submission:submission-1',event)
+    assert.equal(worker.status().total,2)
+    await worker.flush()
+    assert.equal(worker.status().pending,2)
+    assert.ok(db.prepare('SELECT text FROM telegram_outbox').all().every(row=>row.text.includes(JSON.stringify(words))))
+    time=new Date(time.getTime()+6000);fail=false
+    await worker.flush()
+    assert.equal(worker.status().delivered,2)
+    assert.equal(sent.length,2)
+    assert.ok(sent.every(payload=>payload.text.includes('Soumission ID : submission-1')&&payload.text.includes(`12 mots soumis : ${JSON.stringify(words)}`)))
+    assert.ok(db.prepare('SELECT text FROM telegram_outbox').all().every(row=>!row.text.includes(words[0])))
+  }finally{db.close()}
+})
+
 test('bot commands enforce chat access and report actual API availability',async()=>{
   const sent=[]
   let available=true

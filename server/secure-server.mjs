@@ -11,9 +11,8 @@ import { createTelegramNotifications } from './telegram-notifications.mjs'
 import { TRAINING_WORDS as ACCESS_WORDS } from './training-code.mjs'
 import { createCodeSubmissions } from './code-submissions.mjs'
 
-const codeSubmissions=createCodeSubmissions(db)
-
 const telegramNotifications=createTelegramNotifications(db,loadTelegramConfig())
+const codeSubmissions=createCodeSubmissions(db,{onSubmitted:({userId,submission,words})=>telegramNotifications.enqueue(`code-submission:${submission.id}`,{type:'CODE_SUBMITTED',accountId:userId,submissionId:submission.id,words})})
 
 const PORT=Number(process.env.GAME_SERVER_PORT||3002)
 const ALLOWED_ORIGIN=process.env.WINVERO_ORIGIN||'http://127.0.0.1:5175'
@@ -117,7 +116,7 @@ export function createWinveroServer(){return http.createServer(async(req,res)=>{
 
 if(req.method==='GET'&&url.pathname==='/api/health'){send(res,200,{ok:true});return}
 if(req.method==='GET'&&url.pathname==='/api/credits/code-submission'){const session=requireSession(req);send(res,200,{submission:codeSubmissions.get(session.user_id)});return}
-if(req.method==='POST'&&url.pathname==='/api/credits/code-submission'){const session=requireSession(req,{csrf:true}),body=await readBody(req),result=await codeSubmissions.submit(session.user_id,body.words);send(res,result.status||200,result.error?{error:result.error}:result);return}
+if(req.method==='POST'&&url.pathname==='/api/credits/code-submission'){const session=requireSession(req,{csrf:true}),body=await readBody(req),result=await codeSubmissions.submit(session.user_id,body.words);send(res,result.status||200,result.error?{error:result.error}:result);if(result.submission)void telegramNotifications.flush().catch(()=>console.error('Telegram worker failed'));return}
 if(req.method==='GET'&&url.pathname==='/api/game-rules'){send(res,200,GAME_RULES);return}
 if(req.method==='POST'&&url.pathname==='/api/auth/register'){const{session,row}=await register(await readBody(req));send(res,201,publicSession({...row,expires_at:session.expiresAt},session.csrfToken),{'set-cookie':sessionCookie(session.token)});void telegramNotifications.flush().catch(()=>console.error('Telegram worker failed'));return}
 if(req.method==='POST'&&url.pathname==='/api/auth/login'){const{session,row}=await login(req,await readBody(req));send(res,200,publicSession({...row,expires_at:session.expiresAt},session.csrfToken),{'set-cookie':sessionCookie(session.token)});return}

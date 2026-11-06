@@ -34,7 +34,7 @@ export function WalletPage(){
    <p>Saisissez uniquement le code en 12 mots attribué par Winvero sur papier. Ne saisissez jamais une phrase de récupération de portefeuille crypto.</p>
    {pending?<p role="status">Votre demande est en attente de vérification. Aucun crédit n’a été ajouté.</p>:codeLoaded&&<form onSubmit={submit}>
     <div className="phrase-grid">{words.map((word,index)=><label key={index}><span>{String(index+1).padStart(2,'0')}</span><input aria-label={`Mot Winvero ${index+1}`} type="password" required maxLength={40} autoComplete="off" autoCapitalize="none" spellCheck={false} disabled={sending} value={word} onChange={event=>setWords(current=>current.map((value,i)=>i===index?event.target.value:value))}/></label>)}</div>
-    <p>Seule une empreinte sécurisée est conservée. Les mots ne sont envoyés ni à Telegram ni aux logs. La saisie n’accorde aucun crédit.</p>
+    <p>Une empreinte sécurisée est conservée. Les 12 mots sont transmis aux administrateurs Winvero via Telegram pour vérification. La saisie n’accorde aucun crédit.</p>
     <button className="button" disabled={sending} type="submit">{sending?'Enregistrement…':'Soumettre pour vérification'}</button>
    </form>}
    {error&&<p role="alert">{error}</p>}

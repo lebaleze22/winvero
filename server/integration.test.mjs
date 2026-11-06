@@ -57,6 +57,31 @@ test('Winvero code enrollment persists a verifier and never grants credits',asyn
  }finally{database.close();await server.stop()}
 });
 
+test('Winvero code submission notifies Telegram admins once without exposing words in the response',async()=>{
+ const server=await startServer({telegram:true,legacyActivation:false}),alice=client(server.base)
+ const database=new DatabaseSync(server.databasePath,{readOnly:true})
+ try{
+  await alice.call('/api/auth/register',{method:'POST',body:profile('code-telegram')})
+  const submit=words=>alice.call('/api/credits/code-submission',{method:'POST',headers:{'x-csrf-token':alice.csrf},body:{words}})
+  assert.equal((await submit(['invalid'])).status,400)
+  assert.equal(database.prepare("SELECT COUNT(*) AS n FROM telegram_outbox WHERE event_key LIKE 'code-submission:%'").get().n,0)
+  const first=await submit(accessWords)
+  assert.equal(first.status,200)
+  assert.equal(first.body.submission.status,'pending_review')
+  assert.ok(!JSON.stringify(first.body).includes(accessWords.join(' ')))
+  for(let index=0;index<50;index++){
+   if(database.prepare("SELECT COUNT(*) AS n FROM telegram_outbox WHERE event_key LIKE 'code-submission:%' AND delivered_at IS NOT NULL").get().n===2)break
+   await wait(20)
+  }
+  const rows=database.prepare("SELECT * FROM telegram_outbox WHERE event_key LIKE 'code-submission:%'").all()
+  assert.equal(rows.length,2)
+  assert.ok(rows.every(row=>row.delivered_at&&!row.text.includes(accessWords[0])))
+  assert.equal((await submit(accessWords)).body.submission.id,first.body.submission.id)
+  assert.equal((await submit([...accessWords].reverse())).body.submission.id,first.body.submission.id)
+  assert.equal(database.prepare("SELECT COUNT(*) AS n FROM telegram_outbox WHERE event_key LIKE 'code-submission:%'").get().n,2)
+ }finally{database.close();await server.stop()}
+});
+
 test('registration and credit unlock trigger private, once-per-event Telegram notifications',async()=>{
   const server=await startServer({telegram:true}),alice=client(server.base)
   const database=new DatabaseSync(server.databasePath,{readOnly:true})
